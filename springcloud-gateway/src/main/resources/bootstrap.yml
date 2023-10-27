@@ -1,0 +1,86 @@
+nacos:
+  username: nacos
+  password: nacos
+  url: localhost:8848
+  namespace: 975e4be4-ac45-432a-bf86-1c4e68cc271f
+
+server:
+  port: 30001
+
+spring:
+  application:
+    name: gateway-service #实例名
+  redis:
+    #连接超时时间
+    timeout: 10s
+    # Redis服务器地址
+    host: localhost
+    #Redis服务器端口
+    port: 6379
+    #Redis服务器密码
+    password :
+    #选择哪个库,默认0库
+    database : 1
+    lettuce:
+      pool:
+        #最大连接数,默认8
+        max-active: 1024
+        # 最大连接阻塞等待时间,单位豪秒,默认-1
+        max-wait: 10s
+        #最大空闲连接,默认8
+        max-idle: 200
+        #最小空闲连接,默认0
+        min-idle: 5
+  cloud:
+    config:
+      # 如果本地配置优先级高，那么 override-none 设置为 true，包括系统环境变量、本地配置文件等配置
+      override-none: true
+      # 如果想要远程配置优先级高，那么 allow-override 设置为 false，如果想要本地配置优先级高那么 allow-override 设置为 true
+      allow-override: true
+      # 只有系统环境变量或者系统属性才能覆盖远程配置文件的配置，本地配置文件中配置优先级低于远程配置；注意本地配置文件不是系统属性
+      override-system-properties: false
+    nacos:
+      server-addr: ${nacos.url}
+      username: ${nacos.username}
+      password: ${nacos.password}
+      discovery:
+        #集群环境隔离
+        cluster-name: shanghai
+        #命名空间
+        namespace: ${nacos.namespace}
+        #持久化实例 ture为临时实例 false为持久化实例  临时实例发生异常直接剔除, 而持久化实例等待恢复
+        ephemeral: true
+      config:
+        namespace: ${nacos.namespace}
+        file-extension: yaml
+        extension-configs:
+          - data-id: gateway.yml
+            group: DEFAULT_GROUP
+            refresh: true
+          - data-id: sentinel.yml
+            group: DEFAULT_GROUP
+            refresh: true
+#    gateway:
+#      routes:
+#        - id: user-service
+#          #第一种：ws(websocket)方式: uri: ws://localhost:8888
+#          #第二种：http方式: uri: http://localhost:8888/
+#          #第三种：lb(注册中心中服务名字)方式: uri: lb://consumer
+#          # 匹配后提供服务的路由地址
+#          # 需要注意的是uri的协议为lb，表示启用Gateway的负载均衡功能。lb://serviceName是spring cloud gateway在微服务中自动为我们创建的负载均衡uri
+#          uri: lb:web-service-1
+#          predicates:
+#            - Path=/order/**
+#            - After=2023-10-26T13:28:00.000+08:00[Asia/Shanghai]
+##            - Before=2021-02-23T14:20:00.000+08:00[Asia/Shanghai]
+##            - Between=2021-02-23T14:20:00.000+08:00[Asia/Shanghai], 2021-02-24T14:20:00.000+08:00[Asia/Shanghai]
+#            - Cookie=cookie,china
+#            - Header=X-Request-Id,\d+
+#            - Host=localhost
+#            - Method=GET,PUT,POST
+#            - Query=red
+#            - RemoteAddr=192.168.1.1/24
+#            - Weight=group1, 2
+
+
+

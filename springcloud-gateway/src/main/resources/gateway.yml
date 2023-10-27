@@ -1,0 +1,88 @@
+spring:
+  cloud:
+    gateway:
+      # 跨域性问题
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+            exposedHeaders: "Content-Disposition,Content-Type,Cache-Control"
+      # 动态转发注册中心的服务
+      discovery:
+        locator:
+          #开启根据微服务名称自动转发
+          enabled: true
+          #小写
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          # 需要注意的是uri的协议为lb，表示启用Gateway的负载均衡功能。lb://serviceName是spring cloud gateway在微服务中自动为我们创建的负载均衡uri
+          uri: lb://web-service-1
+          predicates:
+            - Path=/user/**
+      #       # - After=2023-10-26T13:30:00.000+08:00[Asia/Shanghai]
+      #       # - Before=2021-02-23T14:20:00.000+08:00[Asia/Shanghai]
+      #       # - Between=2021-02-23T14:20:00.000+08:00[Asia/Shanghai], 2021-02-24T14:20:00.000+08:00[Asia/Shanghai]
+      #       # - Cookie=cookie,china
+      #       # - Header=X-Request-Id,\d+
+      #       # - Host=localhost
+      #       # - Method=GET,PUT,POST
+      #       # - Query=red
+      #       # - RemoteAddr=192.168.1.1/24
+      #       # - Weight=group1, 2
+      #   - id: order-service
+      #     uri: lb://web-service-2
+      #     predicates:
+      #       - Path=/order/**
+        - id: srvice-item
+          uri: lb://web-service-3
+          predicates:
+            - Path=/service-item/**
+          filters:
+          # curl -s localhost:30001/service-item/item/id/SNS000003
+          # 实际请求：web-service-3/item/id/SNS000003
+            - RewritePath=/service-item/?(?<segment>.*), /$\{segment}
+        - id: srvice-item-2
+          uri: lb://web-service-3
+          predicates:
+            - Path=/id/**
+          filters:
+            - PrefixPath=/item
+        - id: srvice-item-3
+          uri: lb://web-service-3
+          predicates:
+            - Path=/xxx/item/**
+          filters:
+            - StripPrefix=2
+            - PrefixPath=/item
+        - id: srvice-item-4
+          uri: lb://web-service-3
+          predicates:
+            - Path=/YYY/{id}/**
+          filters:
+            - SetPath=/item/id/{id}
+        - id: srvice-item-5
+          uri: lb://web-service-3
+          predicates:
+            - Path=/item/param
+          filters:
+            - AddRequestParameter=param,hello
+            - SetStatus=400
+        - id: srvice-order-1
+          uri: lb://web-service-2
+          predicates:
+            - Path=/order/**
+          filters:
+            - name: BlackListUrlFilter
+              args:
+                blacklistUrl:
+                  # 黑名单
+                  - /item/param/1
+            - name: GatewayRequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1   # 令牌桶每秒填充速率
+                redis-rate-limiter.burstCapacity: 1   # 令牌桶总容量
+                key-resolver: "#{@keyResolverConfig}"   # 使用 SpEL 表达式按名称引用 bean

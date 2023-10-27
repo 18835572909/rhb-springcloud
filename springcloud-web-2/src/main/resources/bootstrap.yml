@@ -1,0 +1,49 @@
+nacos:
+  username: nacos
+  password: nacos
+  url: localhost:8848
+  namespace: dfb8c8d0-6ad6-4797-886f-1772c3c951b9
+
+server:
+  port: 10002
+
+feign:
+  hystrix:
+    enabled: true
+#  circuitbreaker:
+#    enabled: true
+
+spring:
+  application:
+    name: web-service-2 #实例名
+  cloud:
+    config:
+      # 如果本地配置优先级高，那么 override-none 设置为 true，包括系统环境变量、本地配置文件等配置
+      override-none: true
+      # 如果想要远程配置优先级高，那么 allow-override 设置为 false，如果想要本地配置优先级高那么 allow-override 设置为 true
+      allow-override: true
+      # 只有系统环境变量或者系统属性才能覆盖远程配置文件的配置，本地配置文件中配置优先级低于远程配置；注意本地配置文件不是系统属性
+      override-system-properties: false
+    nacos:
+      server-addr: ${nacos.url}
+      username: ${nacos.username}
+      password: ${nacos.password}
+      discovery:
+        #集群环境隔离
+        cluster-name: shanghai
+        #命名空间
+        namespace: ${nacos.namespace}
+        #持久化实例 ture为临时实例 false为持久化实例  临时实例发生异常直接剔除, 而持久化实例等待恢复
+        ephemeral: true
+      config:
+        namespace: ${nacos.namespace}
+        file-extension: yaml
+        extension-configs:
+          - data-id: sentinel.yml
+            group: DEFAULT_GROUP
+            refresh: true
+
+
+
+
+
