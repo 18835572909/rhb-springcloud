@@ -1,0 +1,12 @@
+spring:
+  rabbitmq:
+    ##开启发布确认  (三种模式)
+    #        SIMPLE, 同步确认,单次,批量确认 通过invoke调用
+    #            rabbitTemplate.invoke(operations -> {
+    #            rabbitTemplate.convertAndSend("", "hello3", msg, new CorrelationData(id));
+    #            return rabbitTemplate.waitForConfirms(5000);
+    #        });
+    #        CORRELATED,异步确认,消息附带CorrelationData
+    #        NONE;不开启
+    publisher-confirm-type: correlated
+    publisher-returns: true

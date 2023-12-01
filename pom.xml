@@ -16,6 +16,8 @@
         <module>springcloud-web-2</module>
         <module>springcloud-web-3</module>
         <module>springcloud-gateway-sentinel</module>
+        <module>spring-boot-multi-data-source-mq-starter</module>
+        <module>application-shortUrl</module>
     </modules>
 
     <properties>
