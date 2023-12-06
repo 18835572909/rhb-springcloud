@@ -18,6 +18,7 @@
         <module>springcloud-gateway-sentinel</module>
         <module>spring-boot-multi-data-source-mq-starter</module>
         <module>application-shortUrl</module>
+        <module>baidu-ai-image</module>
     </modules>
 
     <properties>

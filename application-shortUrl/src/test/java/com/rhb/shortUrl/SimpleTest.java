@@ -1,7 +1,10 @@
 package com.rhb.shortUrl;
 
 import com.rhb.shortUrl.util.Base62Utils;
+import org.hamcrest.core.Is;
 import org.junit.Test;
+
+import java.util.Optional;
 
 /**
  * @author: rhb
@@ -18,6 +21,25 @@ public class SimpleTest {
 
         System.out.println(shortUrl);
         System.out.println(shortId);
+    }
+
+    @Test
+    public void optionalUser(){
+        Optional<Integer> maxValue = Optional.ofNullable(10);
+
+        System.out.println(maxValue.isPresent());
+
+        maxValue.ifPresent(System.out::println);
+
+        Integer int1 = maxValue.orElse(Integer.MAX_VALUE);
+        Integer int2 = maxValue.orElseGet(() -> Integer.MIN_VALUE);
+//        Integer int3 = maxValue.orElseThrow(() -> new RuntimeException("Optional Value Is Null"));
+        System.out.println("int1:"+int1);
+        System.out.println("int2:"+int2);
+//        System.out.println("int3:"+int3);
+
+        maxValue.filter(int0 -> int0>0).ifPresent(System.out::println);
+        maxValue.map(int0 -> int0.toString()).ifPresent(System.out::println);
     }
 
 }
