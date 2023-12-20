@@ -5,6 +5,7 @@ import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author: rhb
@@ -40,6 +41,19 @@ public class SimpleTest {
 
         maxValue.filter(int0 -> int0>0).ifPresent(System.out::println);
         maxValue.map(int0 -> int0.toString()).ifPresent(System.out::println);
+    }
+
+    @Test
+    public void parallalUse(){
+        Stream<Integer> stream = Stream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        Integer reduce = stream
+                .parallel()
+                .peek(thread -> System.out.println(Thread.currentThread().getName()))
+                .filter(ele->ele>5)
+                .reduce(0, (result, ele) -> result = result + ele);
+
+        System.out.println(reduce);
     }
 
 }
